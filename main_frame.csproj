@@ -201,15 +201,12 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="GlobalPer.cs" />
-    <Compile Include="Migrations\20240702133431_InitialCreate.cs" />
-    <Compile Include="Migrations\20240702133431_InitialCreate.Designer.cs">
-      <DependentUpon>20240702133431_InitialCreate.cs</DependentUpon>
+    <Compile Include="menu.cs">
+      <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Migrations\20240702151134_create.cs" />
-    <Compile Include="Migrations\20240702151134_create.Designer.cs">
-      <DependentUpon>20240702151134_create.cs</DependentUpon>
+    <Compile Include="menu.Designer.cs">
+      <DependentUpon>menu.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\ApplicationContextModelSnapshot.cs" />
     <Compile Include="Reg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -224,6 +221,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="menu.resx">
+      <DependentUpon>menu.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Reg.resx">
       <DependentUpon>Reg.cs</DependentUpon>
