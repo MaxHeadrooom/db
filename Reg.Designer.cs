@@ -75,6 +75,7 @@
             this.label2.Size = new System.Drawing.Size(498, 48);
             this.label2.TabIndex = 5;
             this.label2.Text = "Регистрационный номер";
+            this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // button1
             // 

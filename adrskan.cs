@@ -98,7 +98,7 @@ namespace main_frame
 
             DBHelper dbHelper = new DBHelper();
 
-            dbHelper.SaveandSort();
+            dbHelper.Save();
 
             this.Hide();
             Form1 form1 = new Form1(); 

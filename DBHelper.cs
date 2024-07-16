@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SQLite;
+using System.Data;
 
 namespace main_frame
 {
@@ -52,12 +53,6 @@ namespace main_frame
 
                     conn.Open();
                     cmd.ExecuteNonQuery();
-
-                    // Сортируем данные после добавления
-                    string sortSql = "SELECT * FROM All_Info ORDER BY date_of_doc DESC";
-                    cmd.CommandText = sortSql;
-
-                    
                     conn.Close();
                 }
             }
@@ -77,18 +72,124 @@ namespace main_frame
 
                     using (SQLiteDataReader reader = cmd.ExecuteReader())
                     {
+                        
                         while (reader.Read())
                         {
-                            // Обработка данных
-                            string sortedRegNumber = reader["reg_number"].ToString();
-                            string sortedDateOfDoc = reader["date_of_doc"].ToString();
-                            string sortedOpisanie = reader["opisanie"].ToString();
-                            string sortedAdresat = reader["adresat"].ToString();
-                            byte[] sortedSkanPdf = reader.IsDBNull(reader.GetOrdinal("skan_pdf")) ? null : (byte[])reader["skan_pdf"];
-
-                            Console.WriteLine($"Reg Number: {sortedRegNumber}, Date: {sortedDateOfDoc}, Opisanie: {sortedOpisanie}, Adresat: {sortedAdresat}");
+                            GlobalVariables.sortedRegNumber.Add(reader["reg_number"].ToString());
+                            GlobalVariables.sortedDateOfDoc.Add(reader["date_of_doc"].ToString());
+                            GlobalVariables.sortedOpisanie.Add(reader["opisanie"].ToString());
+                            GlobalVariables.sortedAdresat.Add(reader["adresat"].ToString());
+                            GlobalVariables.sortedSkanPdf.Add(reader.IsDBNull(reader.GetOrdinal("skan_pdf")) ? null : (byte[])reader["skan_pdf"]);
                         }
                     }
+
+                    conn.Close();
+                }
+            }
+        }
+
+        public void Size()
+        {
+            using (SQLiteConnection conn = new SQLiteConnection("data source=DB.db"))
+            {
+                using (SQLiteCommand cmd = new SQLiteCommand())
+                {
+                    string sortSql = "SELECT count(*) from All_Info";
+                    cmd.CommandText = sortSql;
+                    cmd.Connection = conn;
+
+                    conn.Open();
+                    GlobalVariables.size_of_table = Convert.ToInt32(cmd.ExecuteScalar());
+                    conn.Close();
+                }
+            }
+        }
+
+        public void Seek_date()
+        {
+            using (SQLiteConnection conn = new SQLiteConnection("data source=DB.db"))
+            {
+                using (SQLiteCommand cmd = new SQLiteCommand())
+                {
+                    string sek = GlobalVariables.date_seek_per;
+                    string finder = "SELECT * FROM All_Info WHERE date_of_doc = @sek";
+                    cmd.CommandText = finder;
+                    cmd.Connection = conn;
+                    cmd.Parameters.AddWithValue("@sek", sek);
+
+                    conn.Open();
+
+                    using (SQLiteDataAdapter adapter = new SQLiteDataAdapter(cmd))
+                    {
+                        DataTable resultTable = new DataTable();
+                        adapter.Fill(resultTable);
+                        GlobalVariables.temp_db = resultTable;
+                    }
+                    
+                    conn.Close();
+                }
+            }
+        }
+
+        public void Seek_reg()
+        {
+            // Проверяем, что у нас есть предыдущая версия temp_db
+            if (GlobalVariables.temp_db == null || GlobalVariables.temp_db.Rows.Count == 0)
+            {
+                MessageBox.Show("Нет предыдущих данных для выполнения запроса.");
+                return;
+            }
+
+            using (SQLiteConnection conn = new SQLiteConnection("data source=DB.db"))
+            {
+                using (SQLiteCommand cmd = new SQLiteCommand())
+                {
+                    // Используем регистрационный номер из предыдущей версии temp_db
+                    string sek = GlobalVariables.temp_db.Rows[0]["reg_number"].ToString();
+                    string finder = "SELECT * FROM All_Info WHERE reg_number = @sek";
+                    cmd.CommandText = finder;
+                    cmd.Connection = conn;
+                    cmd.Parameters.AddWithValue("@sek", sek);
+
+                    conn.Open();
+
+                    using (SQLiteDataAdapter adapter = new SQLiteDataAdapter(cmd))
+                    {
+                        DataTable resultTable = new DataTable();
+                        adapter.Fill(resultTable);
+
+                        GlobalVariables.temp_db = resultTable;
+
+                    }
+
+                    conn.Close();
+                }
+            }
+        }
+
+
+        public void Seek_adr()
+        {
+            using (SQLiteConnection conn = new SQLiteConnection("data source=DB.db"))
+            {
+                using (SQLiteCommand cmd = new SQLiteCommand())
+                {
+                    string sek = GlobalVariables.adr_seek_per;
+                    string finder = "SELECT * FROM All_Info WHERE adresat = @sek";
+                    cmd.CommandText = finder;
+                    cmd.Connection = conn;
+                    cmd.Parameters.AddWithValue("@sek", sek);
+
+                    conn.Open();
+
+                    using (SQLiteDataAdapter adapter = new SQLiteDataAdapter(cmd))
+                    {
+                        DataTable resultTable = new DataTable();
+                        adapter.Fill(resultTable);
+                        GlobalVariables.temp_db = resultTable;
+                    }
+
+                    conn.Close();
                 }
             }
         }

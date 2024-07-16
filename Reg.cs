@@ -136,6 +136,11 @@ namespace main_frame
 
         }
 
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
         private void Year_int(object sender, KeyPressEventArgs e)
         {
             if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar))

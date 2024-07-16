@@ -26,7 +26,10 @@ namespace main_frame
 
         private void button1_Click(object sender, EventArgs e)
         {
-
+            this.Hide();
+            menu men = new menu();
+            men.when_start();
+            men.Show();
         }
 
         private void button2_Click(object sender, EventArgs e)
